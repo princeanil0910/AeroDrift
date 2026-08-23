@@ -1,0 +1,13 @@
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.vscode/
+.env
+.env.*
+.aws/
+reports/*.json
+reports/*.png
+.pytest_cache/
+.coverage
