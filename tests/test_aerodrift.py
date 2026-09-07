@@ -46,6 +46,18 @@ def test_public_database_detection():
     ]
 
 
+def test_public_database_detection_after_access_is_removed():
+    data = get_mock_cloud_data()
+    data["security_groups"][0]["inbound_rules"][0]["source"] = "REMOVED"
+    graph = build_cloud_topology(data)
+
+    result = detect_public_database_path(graph)
+
+    assert result[0]["status"] == "SAFE"
+    assert result[0]["severity"] == "NONE"
+    assert result[0]["path"] == []
+
+
 def test_remediation_plan_for_detected_drift():
     remediation = generate_remediation({
         "status": "DRIFT_DETECTED",
