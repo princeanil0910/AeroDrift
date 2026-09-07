@@ -109,6 +109,19 @@ def main():
         print(f"Source: {remediation.get('source')}")
         print(f"Status: {remediation['status']}")
 
+        if remediation["action"] == "NO_ACTION":
+            remediation_records.append(
+                (
+                    drift_result,
+                    remediation,
+                    {
+                        "status": "SKIPPED",
+                        "action": "NO_ACTION"
+                    }
+                )
+            )
+            continue
+
 
         # =================================================
         # STEP 8: Generate Remediation Code
