@@ -19,6 +19,8 @@ def test_cloud_topology():
 
     assert graph is not None
     assert len(graph.nodes) > 0
+    assert "internet" in graph
+    assert "db-001" in graph
 
 
 def test_public_database_detection():
@@ -27,4 +29,13 @@ def test_public_database_detection():
 
     result = detect_public_database_path(graph)
 
-    assert result is not None
+    assert len(result) == 1
+    assert result[0]["database"] == "db-001"
+    assert result[0]["status"] == "DRIFT_DETECTED"
+    assert result[0]["severity"] == "CRITICAL"
+    assert result[0]["path"] == [
+        "internet",
+        "sg-001",
+        "ec2-001",
+        "db-001",
+    ]
