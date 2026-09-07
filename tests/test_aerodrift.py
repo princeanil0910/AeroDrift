@@ -7,6 +7,7 @@ from app.remediation.ast_remediation import (
     generate_remediation_code,
     validate_remediation_code,
 )
+from app.remediation.mock_remediation import apply_mock_remediation
 
 
 def test_mock_cloud_data():
@@ -126,3 +127,12 @@ def test_ast_validation_requires_remediate_function():
 
     assert is_valid is False
     assert message == "remediate() function not found"
+
+
+def test_mock_remediation_revokes_public_access():
+    data = get_mock_cloud_data()
+
+    result = apply_mock_remediation(data, "sg-001")
+
+    assert result["status"] == "REMEDIATED"
+    assert data["security_groups"][0]["inbound_rules"][0]["source"] == "REMOVED"
