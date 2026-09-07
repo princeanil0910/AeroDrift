@@ -11,6 +11,7 @@ from app.remediation.ast_remediation import (
     validate_remediation_code,
 )
 from app.remediation.mock_remediation import apply_mock_remediation
+from app.remediation.audit_report import save_remediation_audit
 
 
 def test_mock_cloud_data():
@@ -162,3 +163,30 @@ def test_drift_report_contains_project_metadata(tmp_path, monkeypatch):
     assert report["project"] == "AeroDrift"
     assert report["report_type"] == "Cloud Drift Detection"
     assert report["results"] == [{"status": "SAFE"}]
+
+
+def test_audit_report_contains_verification_result(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+
+    report_path = save_remediation_audit(
+        {
+            "database": "db-001",
+            "status": "DRIFT_DETECTED",
+            "severity": "CRITICAL",
+            "issue": "Public path",
+            "path": ["internet", "db-001"],
+        },
+        {
+            "action": "REVOKE_PUBLIC_ACCESS",
+            "target": "sg-001",
+            "source": "0.0.0.0/0",
+            "status": "REMEDIATION_READY",
+        },
+        {"status": "REMEDIATED", "action": "PUBLIC_ACCESS_REVOKED"},
+        {"status": "SAFE", "path": []},
+    )
+
+    report = json.loads((tmp_path / report_path).read_text(encoding="utf-8"))
+    assert report["database"] == "db-001"
+    assert report["execution"]["status"] == "REMEDIATED"
+    assert report["verification"]["status"] == "SAFE"
