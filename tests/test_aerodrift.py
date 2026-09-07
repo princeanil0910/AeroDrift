@@ -23,6 +23,9 @@ def test_cloud_topology():
     assert len(graph.nodes) > 0
     assert "internet" in graph
     assert "db-001" in graph
+    assert graph.has_edge("internet", "sg-001")
+    assert graph.has_edge("sg-001", "ec2-001")
+    assert graph.has_edge("ec2-001", "db-001")
 
 
 def test_public_database_detection():
