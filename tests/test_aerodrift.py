@@ -136,3 +136,15 @@ def test_mock_remediation_revokes_public_access():
 
     assert result["status"] == "REMEDIATED"
     assert data["security_groups"][0]["inbound_rules"][0]["source"] == "REMOVED"
+
+
+def test_mock_remediation_reports_unknown_security_group():
+    data = get_mock_cloud_data()
+
+    result = apply_mock_remediation(data, "sg-missing")
+
+    assert result == {
+        "status": "FAILED",
+        "security_group": "sg-missing",
+        "action": "SECURITY_GROUP_NOT_FOUND",
+    }
