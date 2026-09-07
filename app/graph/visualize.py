@@ -1,5 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 
 def visualize_topology(graph):
@@ -25,8 +26,11 @@ def visualize_topology(graph):
 
     plt.title("AeroDrift Cloud Topology")
 
+    reports_directory = Path("reports")
+    reports_directory.mkdir(exist_ok=True)
+
     plt.savefig(
-        "reports/cloud_topology.png",
+        reports_directory / "cloud_topology.png",
         dpi=150,
         bbox_inches="tight"
     )
