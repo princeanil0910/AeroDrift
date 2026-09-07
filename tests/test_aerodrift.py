@@ -3,6 +3,10 @@ from app.graph.topology import build_cloud_topology
 from app.detection.drift_detector import detect_public_database_path
 from app.remediation.remediation_engine import generate_remediation
 from app.remediation.safety_check import validate_remediation
+from app.remediation.ast_remediation import (
+    generate_remediation_code,
+    validate_remediation_code,
+)
 
 
 def test_mock_cloud_data():
@@ -89,3 +93,12 @@ def test_safety_check_rejects_unexpected_source():
 
     assert safety_result["approved"] is False
     assert safety_result["reason"] == "Unexpected source rule"
+
+
+def test_generated_remediation_code_is_valid():
+    code = generate_remediation_code("sg-001", "0.0.0.0/0")
+
+    is_valid, message = validate_remediation_code(code)
+
+    assert is_valid is True
+    assert message == "AST validation successful"
