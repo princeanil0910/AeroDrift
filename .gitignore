@@ -1,4 +1,17 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
 venv/
+
+# Generated visualizations and runtime reports
+reports/*.png
+reports/*.json
+
+# Local environment files
+.env
+.idea/
+.vscode/venv/
 .venv/
 __pycache__/
 *.pyc
