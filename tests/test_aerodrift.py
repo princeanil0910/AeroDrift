@@ -102,3 +102,17 @@ def test_generated_remediation_code_is_valid():
 
     assert is_valid is True
     assert message == "AST validation successful"
+
+
+def test_ast_validation_rejects_invalid_python():
+    is_valid, message = validate_remediation_code("def broken(:")
+
+    assert is_valid is False
+    assert message.startswith("Invalid Python code:")
+
+
+def test_ast_validation_requires_remediate_function():
+    is_valid, message = validate_remediation_code("def unrelated():\n    pass")
+
+    assert is_valid is False
+    assert message == "remediate() function not found"
