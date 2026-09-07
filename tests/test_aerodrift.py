@@ -1,6 +1,9 @@
+import json
+
 from app.ingestion.mock_data import get_mock_cloud_data
 from app.graph.topology import build_cloud_topology
 from app.detection.drift_detector import detect_public_database_path
+from app.detection.report import save_drift_report
 from app.remediation.remediation_engine import generate_remediation
 from app.remediation.safety_check import validate_remediation
 from app.remediation.ast_remediation import (
@@ -148,3 +151,14 @@ def test_mock_remediation_reports_unknown_security_group():
         "security_group": "sg-missing",
         "action": "SECURITY_GROUP_NOT_FOUND",
     }
+
+
+def test_drift_report_contains_project_metadata(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+
+    report_path = save_drift_report([{"status": "SAFE"}])
+
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    assert report["project"] == "AeroDrift"
+    assert report["report_type"] == "Cloud Drift Detection"
+    assert report["results"] == [{"status": "SAFE"}]
