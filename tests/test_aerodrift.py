@@ -95,6 +95,16 @@ def test_safety_check_rejects_unexpected_source():
     assert safety_result["reason"] == "Unexpected source rule"
 
 
+def test_safety_check_reports_missing_fields():
+    safety_result = validate_remediation({
+        "action": "REVOKE_PUBLIC_ACCESS",
+        "target": "sg-001",
+    })
+
+    assert safety_result["approved"] is False
+    assert safety_result["reason"] == "Missing required field: source"
+
+
 def test_generated_remediation_code_is_valid():
     code = generate_remediation_code("sg-001", "0.0.0.0/0")
 
